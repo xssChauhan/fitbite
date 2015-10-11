@@ -1,0 +1,14 @@
+1. Install Postgresql using the following command on ubuntu: sudo apt-get install postgresql-9.3postgresql-client-9.3postgeresql-contrib-9.3 libpq-dev
+2. sudo su - postgres  //Logs you into the postgres
+3. psql
+4. create database dbname
+5. create user username
+6. password password
+7. GRANT ALL PRIVILEGES ON DATABASE dbname to username
+8. \q
+
+
+Credentials for the present database:
+dbname : fitbite
+user:  fitbiteDev
+password : passwordIMHO
