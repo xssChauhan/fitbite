@@ -1,35 +1,59 @@
-import os
-from flask import jsonify
+import os, random
+from flask import jsonify,send_from_directory
 from .. import db
-from ..models import Products, Images
+from ..models import Products, Images, Sessions
 from . import api
-from .errorHandlers import AuthenticationFailed
+clientID = 45678
+imageDIR = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file__))),'images')
+
+errorMessages = {
+	'sessionNotFound'  	: 'Forbidden Use; Cannot identify Session',
+	'appIDNotFound': 'Forbidden Use; Cannot Authenticate'
+	}
 
 
-@api.errorhandler(AuthenticationFailed)
-def authentication_failed(error):
-	response = jsonify(error.to_dict())
-	response.status_code = error.status_code
-	return response
 
-@api.errorhandler(Exception)
-def errors(error):
-	return 'From API Blueprint: ' + repr(error)
+def findSession(id):
+	'''Enhance the robustness by considering in the '''
+	s = Sessions.query.filter_by(sID = str(id)).first();
+	if s.sID == id:
+		return s.activeState
+	else:
+		raise AuthenticationFailed(errorMessages['sessionNotFound'], status_code = 403)
 
-@api.errorhandler(404)
-def notFound():
-	pass
+def deleteSession(id):
+	s = Sessions.query.filter_by(sID = str(id)).first()
+	if s == []:
+		raise AuthenticationFailed(errorMessages['sessionNotFound'])
+	else:
+		db.session.delete(s)
+		db.session.commit()
 
+
+@api.route('/api/startSession/<int:appID>')
+def startSession(appID):
+	if appID == clientID:
+		hash = random.getrandbits(128)
+		s = Sessions(sID = str(hash), activeState = True)
+		db.session.add(s)
+		db.session.commit()
+		return jsonify(json_list = [hash])
+	else:
+		raise AuthenticationFailed( errorMessages['appIDNotFound'] , status_code = 403)
+
+@api.route('/api/endSession/<sessionID>')
+def endSession(sessionID):
+	deleteSession(sessionID)
+	return 'Session Deleted'
 
 #APIs for getting products
 @api.route('/api/<auth>/get/products/')
 def getProducts(auth):
 	'''Returns the all the Products List as a HTTP json object'''
-	if auth is not None:
+	if findSession(auth):
 		products = Products.query.all()
 		return jsonify(json_list = [e.serialize for e in products])
-	else:
-		raise AuthenticationFailed('Forbidden Use; Authentication Failed', status_code = 403)
+	
 
 @api.route('/api/<auth>/get/product/<int:id>')
 def getProductByID(auth,id):
@@ -37,10 +61,8 @@ def getProductByID(auth,id):
 	if auth is not None:
 		product = Products.query.filter_by(id=id).first()
 		return jsonify(product.serialize)
-	else:
-		raise AuthenticationFailed('Forbidden Use; Authentication Failed', status_code = 403)
 
 @api.route('/api/get/productImage/<filename>')
 def getProductImage(filename):
-	pass
-	
+    if filename in os.listdir(imageDIR):
+    	return send_from_directory(imageDIR,filename)

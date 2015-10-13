@@ -55,3 +55,11 @@ class Images(db.Model):
 		'imageSize' : self.imageSize,
 		'productID' : self.productID
 		}
+
+class Sessions(db.Model):
+	__tablename__ = 'sessions'
+	sID = db.Column(db.String(50), primary_key = True, nullable = False)
+	activeState = db.Column(db.Boolean,nullable = False, default = False)
+
+	def __repr__(self):
+		return '<Session %r>' %(self.sID)
