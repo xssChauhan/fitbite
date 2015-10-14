@@ -50,16 +50,18 @@ def endSession(sessionID):
 @api.route('/api/get/products/')
 def getProducts(auth):
 	'''Returns the all the Products List as a HTTP json object'''
-	if findSession(auth):
-		products = Products.query.all()
-		return jsonify(json_list = [e.serialize for e in products])
+	
+	products = Products.query.all()
+	return jsonify(json_list = [e.serialize for e in products])
 	
 
 @api.route('/api/get/product/<int:id>')
 def getProductByID(auth,id):
 	'''Returns the Product with the ID as a HTTP json object'''
-	if auth is not None:
-		product = Products.query.filter_by(id=id).first()
+	product = Products.query.filter_by(id=id).first()
+	if not product:
+		abort(404)
+	else:
 		return jsonify(product.serialize)
 
 @api.route('/api/get/productImage/<filename>')
