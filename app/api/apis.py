@@ -47,7 +47,7 @@ def endSession(sessionID):
 	return 'Session Deleted'
 
 #APIs for getting products
-@api.route('/api/<auth>/get/products/')
+@api.route('/api/get/products/')
 def getProducts(auth):
 	'''Returns the all the Products List as a HTTP json object'''
 	if findSession(auth):
@@ -55,7 +55,7 @@ def getProducts(auth):
 		return jsonify(json_list = [e.serialize for e in products])
 	
 
-@api.route('/api/<auth>/get/product/<int:id>')
+@api.route('/api/get/product/<int:id>')
 def getProductByID(auth,id):
 	'''Returns the Product with the ID as a HTTP json object'''
 	if auth is not None:
