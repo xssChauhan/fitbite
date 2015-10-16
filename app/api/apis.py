@@ -1,5 +1,5 @@
 import os, random
-from flask import jsonify,send_from_directory
+from flask import jsonify,send_from_directory, make_response
 from .. import db
 from ..models import Products, Images, Sessions
 from . import api
@@ -11,6 +11,9 @@ errorMessages = {
 	'appIDNotFound': 'Forbidden Use; Cannot Authenticate'
 	}
 
+@api.route('/')
+def yes():
+	return 'Hello'
 
 
 def findSession(id):
@@ -48,7 +51,7 @@ def endSession(sessionID):
 
 #APIs for getting products
 @api.route('/api/get/products/')
-def getProducts(auth):
+def getProducts():
 	'''Returns the all the Products List as a HTTP json object'''
 	
 	products = Products.query.all()
@@ -56,7 +59,7 @@ def getProducts(auth):
 	
 
 @api.route('/api/get/product/<int:id>')
-def getProductByID(auth,id):
+def getProductByID(id):
 	'''Returns the Product with the ID as a HTTP json object'''
 	product = Products.query.filter_by(id=id).first()
 	if not product:
@@ -68,3 +71,5 @@ def getProductByID(auth,id):
 def getProductImage(filename):
     if filename in os.listdir(imageDIR):
     	return send_from_directory(imageDIR,filename)
+
+
