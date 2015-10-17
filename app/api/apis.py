@@ -1,5 +1,5 @@
 import os, random
-from flask import jsonify,send_from_directory, make_response
+from flask import jsonify,send_from_directory, make_response, Response, json
 from .. import db
 from ..models import Products, Images, Sessions
 from . import api
@@ -53,9 +53,9 @@ def endSession(sessionID):
 @api.route('/api/get/products/')
 def getProducts():
 	'''Returns the all the Products List as a HTTP json object'''
-	
 	products = Products.query.all()
-	return jsonify(json_list = [e.serialize for e in products])
+	a = [e.serialize for e in products]
+	return Response(json.dumps(a,indent = 1), mimetype = 'application/json')
 	
 
 @api.route('/api/get/product/<int:id>')
