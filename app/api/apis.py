@@ -1,5 +1,5 @@
 import os, random
-from flask import jsonify,send_from_directory, make_response, Response, json
+from flask import request,jsonify,send_from_directory, make_response, Response, json
 from .. import db
 from ..models import Products, Images, Sessions
 from . import api
@@ -58,18 +58,23 @@ def getProducts():
 	return Response(json.dumps(a,indent = 1), mimetype = 'application/json')
 	
 
-@api.route('/api/get/product/<int:id>')
-def getProductByID(id):
+@api.route('/api/get/product/', methods =['POST'])
+def getProductByID():
 	'''Returns the Product with the ID as a HTTP json object'''
+	id = request.form['id']
 	product = Products.query.filter_by(id=id).first()
 	if not product:
 		abort(404)
 	else:
 		return jsonify(product.serialize)
 
-@api.route('/api/get/productImage/<filename>')
-def getProductImage(filename):
-    if filename in os.listdir(imageDIR):
-    	return send_from_directory(imageDIR,filename)
+@api.route('/api/get/productImage/', methods= ['POST'])
+def getProductImage():
+	filename = request.form['filename']
+	if filename is not None:
+	    if filename in os.listdir(imageDIR):
+	    	return send_from_directory(imageDIR,filename)
+	else:
+		return '404 not found'
 
 

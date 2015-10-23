@@ -1,7 +1,9 @@
 import os
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.login import UserMixin, LoginManager, login_required
 
+login_manager = LoginManager()
 db = SQLAlchemy()
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -12,6 +14,7 @@ def create_app():
 	app.config['SECRET_KEY'] = 'BohemianRhapsody'
 	app.config['IMAGES_PATH'] = os.path.join(basedir)
 	db.init_app(app)
+	login_manager.init_app(app)
 
 	from .api import api as api_blueprint
 	app.register_blueprint(api_blueprint)
