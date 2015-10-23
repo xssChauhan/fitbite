@@ -73,7 +73,7 @@ def getProductByID():
 
 @api.route('/api/get/productImage', methods= ['POST','GET'])
 def getProductImage():
-	filename = request.args.get('id')
+	filename = request.args.get('filename')
 	if filename is not None:
 	    if filename in os.listdir(imageDIR):
 	    	return send_from_directory(imageDIR,filename)
