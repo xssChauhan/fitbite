@@ -7,14 +7,14 @@ Initial Release for APIs for fitbite backend.
     * Product Name
     * Locations for images of the product
     * Price of the product
-  * **/api/get/product/[product id]** : Returns a JSON object containing the list of all the products. Each product has the following information:
+  * **/api/get/product?id=[id]** : Works with both GET and POST requests. Returns a JSON object containing the list of all the products. Each product has the following information:
     * Product ID
     * Product Name
     * Images of the product
     * Price
     * Description
     * Other meta information like tags, categories, etc
-  * **/api/get/productImage/[filename]** :  Returns images as an HTTP response. Please use the filenames obtained in the products APIs for making this request.
+  * **/api/get/productImage?filename=[filename]** : Works with both GET and POST requests  Returns images as an HTTP response. Please use the filenames obtained in the products APIs for making this request.
   * **/api/startSession/[app_id]** : Registers a session with the server and returns in response the session key. This key is used to authenticate further API calls.
   * **/api/endSession/[session_key]** : Call the API to delete the session from the serveer.
 
