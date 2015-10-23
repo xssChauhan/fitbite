@@ -58,19 +58,22 @@ def getProducts():
 	return Response(json.dumps(a,indent = 1), mimetype = 'application/json')
 	
 
-@api.route('/api/get/product/', methods =['POST'])
+@api.route('/api/get/product', methods =['POST', 'GET'])
 def getProductByID():
 	'''Returns the Product with the ID as a HTTP json object'''
-	id = request.form['id']
-	product = Products.query.filter_by(id=id).first()
-	if not product:
-		abort(404)
+	id = request.args.get('id')
+	if id is not None:
+		product = Products.query.filter_by(id=id).first()
+		if not product:
+			return '404 not found'
+		else:
+			return jsonify(product.serialize)
 	else:
-		return jsonify(product.serialize)
+		return '404 Not Found'
 
-@api.route('/api/get/productImage/', methods= ['POST'])
+@api.route('/api/get/productImage', methods= ['POST','GET'])
 def getProductImage():
-	filename = request.form['filename']
+	filename = request.args.get('id')
 	if filename is not None:
 	    if filename in os.listdir(imageDIR):
 	    	return send_from_directory(imageDIR,filename)
